@@ -4,7 +4,7 @@
   <title><![CDATA[DailyRecord::Base]]></title>
   <link href="http://littlestarling.github.com/atom.xml" rel="self"/>
   <link href="http://littlestarling.github.com/"/>
-  <updated>2012-04-19T10:35:08+09:00</updated>
+  <updated>2012-04-19T11:03:49+09:00</updated>
   <id>http://littlestarling.github.com/</id>
   <author>
     <name><![CDATA[littlestarling]]></name>
@@ -12,5 +12,51 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[素数日を求める]]></title>
+    <link href="http://littlestarling.github.com/blog/2012/04/19/calculate-prime-days/"/>
+    <updated>2012-04-19T10:42:00+09:00</updated>
+    <id>http://littlestarling.github.com/blog/2012/04/19/calculate-prime-days</id>
+    <content type="html"><![CDATA[<p>blogのpostテストがてら。</p>
+
+<div><script src='https://gist.github.com/2372772.js?file='></script>
+<noscript><pre><code>#-*- coding:utf-8 -*-
+require 'date'
+require 'mathn'
+
+def prime_days(sday, eday)
+  sday = Date.today unless sday
+  eday = Date.today unless eday
+  begin
+    sday = Date.parse(sday)
+    eday = Date.parse(eday)
+  rescue
+    puts %Q!invalid date. Usage: prime_days &quot;2012-01-01&quot; &quot;2020-01-01&quot;!
+    return
+  end
+  s = sday.strftime(&quot;%Y%m%d&quot;).to_i
+  e = eday.strftime(&quot;%Y%m%d&quot;).to_i
+  days = []
+  (s..e).each do |num|
+    if num.prime?
+      begin
+        day = Date.parse(num.to_s)
+        days &lt;&lt; day.to_s
+      rescue
+      end
+    end
+  end
+
+  puts &quot;prime days from #{sday} to #{eday}:&quot;
+  days.each{|day| puts day}
+end
+
+prime_days(ARGV[0], ARGV[1])</code></pre></noscript></div>
+
+
+
+]]></content>
+  </entry>
   
 </feed>

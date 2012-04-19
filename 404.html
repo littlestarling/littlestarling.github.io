@@ -5,13 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>DailyRecord::Base</title>
+  <title>Whoops I couldn't find that page - DailyRecord::Base</title>
   <meta name="author" content="littlestarling">
 
   
-  <meta name="description" content="blogのpostテストがてら。 #-*- coding:utf-8 -*-
-require 'date'
-require 'mathn' def prime_days(sday, eday) sday = Date.today unless sday eday = Date.today &hellip;">
+  <meta name="description" content="Whoops I Couldn't Find That Page You may want to try a search above, or visit the homepage. Also, here are some recent posts: Apr 19 素数日を求める Tweet &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +18,7 @@ require 'mathn' def prime_days(sday, eday) sday = Date.today unless sday eday = 
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://littlestarling.github.com">
+  <link rel="canonical" href="http://littlestarling.github.com/404.html">
   <link href="/favicon.ico" rel="icon">
   
   <link href="/assets/bootstrap/css/spacelab.min.css" rel="stylesheet" type="text/css">
@@ -88,91 +86,65 @@ require 'mathn' def prime_days(sday, eday) sday = Date.today unless sday eday = 
     </header>
     <div id="main">
       <div id="content">
-        <div class="blog-index">
-  
-  
-  
-    <article>
-      
-  <header>
+        <div class="row">
+  <div class="span8">
     
-      <h1 class="entry-title"><a href="/blog/2012/04/19/calculate-prime-days/">素数日を求める</a></h1>
-    
-    
-      <p class="meta">
+      <div class="page-header">
+        <h1>Whoops I Couldn't Find That Page</h1>
         
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-04-19T10:42:00+09:00" pubdate data-updated="true">Apr 19<span>th</span>, 2012</time>
-        
-      </p>
+      </div>
     
-  </header>
+    
+    <p>You may want to try a search above, or <a href="/">visit the homepage</a>.</p>
 
+<p>Also, here are some recent posts:</p>
 
-  <div class="entry-content"><p>blogのpostテストがてら。</p>
+<div id="blog-archives" class="missing">
+  
+  <article>
+    <td class="day">
+  <h3><small><time datetime="2012-04-19T10:42:00+09:00" pubdate><span class='month'>Apr</span> <span class='day'>19</span></time></small></h3>
+</td>
+<td>
+  
+  <h3><a href="/blog/2012/04/19/calculate-prime-days/">素数日を求める</a></h3>
+  
+</td>
 
-<div><script src='https://gist.github.com/2372772.js?file='></script>
-<noscript><pre><code>#-*- coding:utf-8 -*-
-require 'date'
-require 'mathn'
-
-def prime_days(sday, eday)
-  sday = Date.today unless sday
-  eday = Date.today unless eday
-  begin
-    sday = Date.parse(sday)
-    eday = Date.parse(eday)
-  rescue
-    puts %Q!invalid date. Usage: prime_days &quot;2012-01-01&quot; &quot;2020-01-01&quot;!
-    return
-  end
-  s = sday.strftime(&quot;%Y%m%d&quot;).to_i
-  e = eday.strftime(&quot;%Y%m%d&quot;).to_i
-  days = []
-  (s..e).each do |num|
-    if num.prime?
-      begin
-        day = Date.parse(num.to_s)
-        days &lt;&lt; day.to_s
-      rescue
-      end
-    end
-  end
-
-  puts &quot;prime days from #{sday} to #{eday}:&quot;
-  days.each{|day| puts day}
-end
-
-prime_days(ARGV[0], ARGV[1])</code></pre></noscript></div>
-
-
-
+  </article>
+  
 </div>
-  
-  
 
 
-    </article>
-  
-  <div class="pagination">
     
-    <a href="/blog/archives">Blog Archives</a>
+    
+      <footer>
+        
+        
+          <div class="sharing">
+  <br/>
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://littlestarling.github.com/404.html" data-via="littlestarling" data-counturl="http://littlestarling.github.com/404.html" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+        
+      </footer>
+    
+    
     
   </div>
-</div>
-<aside class="sidebar">
   
-    <section>
+  <div class="span4 sidebar">
+    <div class="well">
+      
+        <section>
   <h2>Recent Posts</h2>
   <ul id="recent_posts">
     
@@ -186,7 +158,7 @@ prime_days(ARGV[0], ARGV[1])</code></pre></noscript></div>
 <section>
   <h2>GitHub Repos</h2>
   <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   
   <a href="https://github.com/littlestarling">@littlestarling</a> on GitHub
@@ -216,7 +188,7 @@ prime_days(ARGV[0], ARGV[1])</code></pre></noscript></div>
 <section>
   <h2>Latest Tweets</h2>
   <ul id="tweets">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   
     <a href="http://twitter.com/littlestarling" class="twitter-follow-button" data-show-count="false">Follow @littlestarling</a>
@@ -227,9 +199,11 @@ prime_days(ARGV[0], ARGV[1])</code></pre></noscript></div>
 
 
 
-  
-</aside>
+      
+    </div>
+  </div>
 
+</div>
       </div>
     </div>
     <footer class="footer"><p>
