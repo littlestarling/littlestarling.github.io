@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[DailyRecord::Base]]></title>
-  <link href="http://littlestarling.github.com/atom.xml" rel="self"/>
+  <title><![CDATA[Category: event | DailyRecord::Base]]></title>
+  <link href="http://littlestarling.github.com/blog/categories/event/atom.xml" rel="self"/>
   <link href="http://littlestarling.github.com/"/>
   <updated>2012-04-23T18:37:21+09:00</updated>
   <id>http://littlestarling.github.com/</id>
@@ -50,52 +50,6 @@ MercurialとGitについてという話でひとしきり話題になったこ�
 がらそれ以上のものを感じさせてくれた会場提供のフューチャーアーキテクトさんの力は非常に大きかったと思う。
 継続して開催していく方向だそうだけどあまり会場ハードルを高めずに各々の道場でやっていけるような形になって
 いくといいなと思った。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[素数日を求める]]></title>
-    <link href="http://littlestarling.github.com/blog/2012/04/19/calculate-prime-days/"/>
-    <updated>2012-04-19T10:42:00+09:00</updated>
-    <id>http://littlestarling.github.com/blog/2012/04/19/calculate-prime-days</id>
-    <content type="html"><![CDATA[<p>blogのpostテストがてら。</p>
-
-<div><script src='https://gist.github.com/2372772.js?file='></script>
-<noscript><pre><code>#-*- coding:utf-8 -*-
-require 'date'
-require 'mathn'
-
-def prime_days(sday, eday)
-  sday = Date.today unless sday
-  eday = Date.today unless eday
-  begin
-    sday = Date.parse(sday)
-    eday = Date.parse(eday)
-  rescue
-    puts %Q!invalid date. Usage: prime_days &quot;2012-01-01&quot; &quot;2020-01-01&quot;!
-    return
-  end
-  s = sday.strftime(&quot;%Y%m%d&quot;).to_i
-  e = eday.strftime(&quot;%Y%m%d&quot;).to_i
-  days = []
-  (s..e).each do |num|
-    if num.prime?
-      begin
-        day = Date.parse(num.to_s)
-        days &lt;&lt; day.to_s
-      rescue
-      end
-    end
-  end
-
-  puts &quot;prime days from #{sday} to #{eday}:&quot;
-  days.each{|day| puts day}
-end
-
-prime_days(ARGV[0], ARGV[1])</code></pre></noscript></div>
-
-
-
 ]]></content>
   </entry>
   

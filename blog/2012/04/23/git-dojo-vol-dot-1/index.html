@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Blog Archive - DailyRecord::Base</title>
+  <title>git道場第1回に参加した - DailyRecord::Base</title>
   <meta name="author" content="littlestarling">
 
   
-  <meta name="description" content="Blog Archive 2012 Apr 23 git道場第1回に参加した posted in event, git Apr 19 素数日を求める Recent Posts git道場第1回に参加した 素数日を求める GitHub Repos Status updating... @ &hellip;">
+  <meta name="description" content="ちょうど時期的にあいていた（と思っていた）こともあって、git道場の実行委員兼tutorみたいなことをしてきた。 初心者向けの作業を徹底する、という文字通り型を覚えるような内容なので、告知1時間で釣られるような情強には
+物足りないのではないかという危惧もあったものの、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://littlestarling.github.com/blog/archives">
+  <link rel="canonical" href="http://littlestarling.github.com/blog/2012/04/23/git-dojo-vol-dot-1">
   <link href="/favicon.ico" rel="icon">
   
   <link href="/assets/bootstrap/css/spacelab.min.css" rel="stylesheet" type="text/css">
@@ -89,59 +90,126 @@
         <div class="row">
   <div class="span8">
     
-      <div class="page-header">
-        <h1>Blog Archive</h1>
+  <header>
+    
+      <h1 class="entry-title">Git道場第1回に参加した</h1>
+    
+    
+      <p class="meta">
         
-      </div>
-    
-    
-    <div id="blog-archives">
-  <table>
-    
-      <tr>
-        <td class="year">
-          
-          
-            
-            <h3><small><strong>2012</strong></small></h3>
-          
-        </td>
-        <td class="day">
-  <h3><small><time datetime="2012-04-23T18:34:00+09:00" pubdate><span class='month'>Apr</span> <span class='day'>23</span></time></small></h3>
-</td>
-<td>
-  
-  <h3><a href="/blog/2012/04/23/git-dojo-vol-dot-1/">git道場第1回に参加した</a></h3>
-  
-  <h3><small>posted in <a class='category' href='/blog/categories/event/'>event</a>, <a class='category' href='/blog/categories/git/'>git</a></small></h3>
-  
-</td>
 
-      </tr>
-    
-      <tr>
-        <td class="year">
-          
-          
-        </td>
-        <td class="day">
-  <h3><small><time datetime="2012-04-19T10:42:00+09:00" pubdate><span class='month'>Apr</span> <span class='day'>19</span></time></small></h3>
-</td>
-<td>
-  
-  <h3><a href="/blog/2012/04/19/calculate-prime-days/">素数日を求める</a></h3>
-  
-</td>
 
-      </tr>
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-23T18:34:00+09:00" pubdate data-updated="true">Apr 23<span>rd</span>, 2012</time>
+        
+      </p>
     
-  </table>
+  </header>
+
+
+  
+  
+  <div class="entry-content"><p>ちょうど時期的にあいていた（と思っていた）こともあって、git道場の実行委員兼tutorみたいなことをしてきた。</p>
+
+<p>初心者向けの作業を徹底する、という文字通り型を覚えるような内容なので、告知1時間で釣られるような情強には
+物足りないのではないかという危惧もあったものの、いざやってみると複数人で作業してコンフリクトを強いられる
+というシチュエーションはそこそこ目新しく感じた人が多いように思った。</p>
+
+<p>結構いろんなバックボーンを持っている人が多くて、話を聞いたり、こちらなりに説明してみたりといったところは
+勉強になった。masterの位置が相対的であるというのは面白いね、とは@jm6xxu氏の言。</p>
+
+<p>Mercurial使いの人もいて、リポジトリの家系図に対してどうアプローチするかといった話も聞けた。先日ちょうど
+MercurialとGitについてという話でひとしきり話題になったこともあったので、この辺自分なりの解釈をまとめたい
+と思うところ。</p>
+
+<p>道場本体の説明としてはそれぞれに利点と欠点がある、という締めだったので、あとは参加者がどのように感じた
+のかを消化していってくれればよいのではないかなと思う。あそこに1000円という参加費を出した価値以上のもの
+を感じられるような空気はできていたんじゃないかなと、運営に関わった者の一人として少し自負したいところは
+あるけれどどう感じられたんだろう。</p>
+
+<p>僕個人は徹底してコミットの内容とコミットメッセージの集合は人間が行った操作の意志の表明として使うことで
+きれいな家系図になる、という視点で話していたけど、そこに異論を持つ人もいるかもしれない。特にコンフリクト
+解消時の作業が作業者の意図する内容と異なる操作だった場合、そこに乖離が発生してしまう。
+コンフリクトの解消自体はどこまでいっても人間の作業としては注意力を要するところだし、そこに責任を持つと
+いうのが大事なのだということで必ずcommit時に-sつけて署名するのも本来やった方がいいんだろうなとか。</p>
+
+<p>コンピュータがよろしくやってくれるというところは増えているけれど、その分人間が行うことははっきり意志を
+持たなければならないし、表明すべきだ、という概念的な話に終始してしまいそうだけど、そこは非常に強く感じ
+た1日だった。</p>
+
+<p>イベント主旨的には気楽にheroku使えるようにもなってくださいね、というのもあるし、第1回で有料イベントな
+がらそれ以上のものを感じさせてくれた会場提供のフューチャーアーキテクトさんの力は非常に大きかったと思う。
+継続して開催していく方向だそうだけどあまり会場ハードルを高めずに各々の道場でやっていけるような形になって
+いくといいなと思った。</p>
 </div>
-    
-    
+
+  
+
+
+    <footer>
+      <p class="meta">
+        
+  
+
+<span class="byline author vcard">Posted by <span class="fn">littlestarling</span></span>
+
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-23T18:34:00+09:00" pubdate data-updated="true">Apr 23<span>rd</span>, 2012</time>
+        
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/event/'>event</a>, <a class='category' href='/blog/categories/git/'>git</a>
+  
+</span>
+
+
+      </p>
+      
+        <div class="sharing">
+  <br/>
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://littlestarling.github.com/blog/2012/04/23/git-dojo-vol-dot-1/" data-via="littlestarling" data-counturl="http://littlestarling.github.com/blog/2012/04/23/git-dojo-vol-dot-1/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+      
+      <p class="meta">
+        
+          <a class="basic-alignment left" href="/blog/2012/04/19/calculate-prime-days/" title="Previous Post: 素数日を求める">&laquo; 素数日を求める</a>
+        
+        
+      </p>
+    </footer>
     
     
   </div>
+
   
   <div class="span4 sidebar">
     <div class="well">
@@ -210,6 +278,8 @@
   </div>
 
 </div>
+
+
       </div>
     </div>
     <footer class="footer"><p>
