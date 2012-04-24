@@ -1,0 +1,430 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>anyenvで入れたphpenvでMacにPHPをインストールする - DailyRecord::Base</title>
+  <meta name="author" content="littlestarling">
+
+  
+  <meta name="description" content="前提 対象OS: Mac OSX 10.9.2 Mavericks
+既存のPHP(/usr/bin/php)を残す しょうもない系が続く。
+最近お仕事的にぺちぺちするところもあって、PHPのバージョン違いを考慮する必要なんかもあるので
+rbenv同様phpenvを入れておこうかと。 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://littlestarling.github.com/blog/2014/05/02/install-php-via-phpenv-on-anyenv/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="DailyRecord::Base" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-31141313-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:littlestarling.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+    <li><a href="/">
+        <span class="blue_light">
+            DailyRecord::Base
+        </span>
+       
+           <span class="blue_dark">
+             My tech notes.
+           </span>
+       
+    </a></li>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About me</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">anyenvで入れたphpenvでMacにPHPをインストールする</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-02T14:58:00+09:00" pubdate data-updated="true">May 2<span>nd</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>前提</h2>
+
+<ul>
+<li>対象OS: Mac OSX 10.9.2 Mavericks</li>
+<li>既存のPHP(/usr/bin/php)を残す</li>
+</ul>
+
+
+<p>しょうもない系が続く。
+最近お仕事的にぺちぺちするところもあって、PHPのバージョン違いを考慮する必要なんかもあるので
+rbenv同様phpenvを入れておこうかと。ところが巷にあふれているphpenv(CHH/phpenv)はlibexecにまんまrbenv
+を突っ込んでいたりで、共存させるには*shrcで読ませる順番を気にしないといけないといった問題があった。
+現状まだバージョンを変える必要はないけどPythonもちょっとだけ読み書きしているのでpyenvも同じように&#8230;
+ということを考えるとanyenvで管理するべきかなと思い至った。
+rbenvは問題ないのだが、このphpenvが現状厄介なのでどうにかしてインストールまでこぎつける。</p>
+
+<h2>ざっくり作業メモ</h2>
+
+<h3>homebrewで入れていた*env系をremoveしていく</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ brew remove rbenv
+</span><span class='line'>  $ brew remove rbenv-gemset # gemset使う派です
+</span><span class='line'>  $ brew remove pyenv
+</span><span class='line'>  $ brew remove pyenb-virtualenv</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>anyenvインストール</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ cd
+</span><span class='line'>  $ git clone https://github.com/riywo/anyenv ~/.anyenv
+</span><span class='line'>  $ echo 'export PATH="$HOME/.anyenv/bin:$PATH"' &gt;&gt; ~/.zshrc
+</span><span class='line'>  $ echo 'eval "$(anyenv init -)"' &gt;&gt; ~/.zshrc
+</span><span class='line'>  $ exec $SHELL -l</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>*envインストール</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ anyenv install rbenv
+</span><span class='line'>  $ cd .anyenv/envs/rbenv/plugins
+</span><span class='line'>  $ git clone git://github.com/jf/rbenv-gemset.git # 使う派でｓ
+</span><span class='line'>  $ cd
+</span><span class='line'>  $ anyenv install phpenv</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Rubyインストール</h3>
+
+<p>そのまま引き継げるという話もあったけど、とりあえずこうやってまとめられるまでに試行錯誤が
+発生していたのでまっさらにし直した。readlineのバージョンを下げる必要もないので、パッチを
+充ててインストールする。<a href="http://qiita.com/riocampos@github/items/7ca8fa8e4448cd598ae0">Ruby 2.1.1 / 2.0.0をreadline 6.3の環境でもインストールするには - Qiita</a>
+を参照してコマンドをコピペ。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ curl -sSL https://gist.github.com/mislav/a18b9d7f0dc5b9efc162.txt | env CONFIGURE_OPTS="--with-readline-dir=`brew --prefix readline` --with-openssl-dir=`brew --prefix openssl`" rbenv install --patch 2.1.1</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>PHPインストール</h3>
+
+<p>一応今回のメイン。どういう悶着があったのかわからないが通信がさっぱり出来ていなくて、よく見たら
+phpenv/php-ext/httpの中身がすっからかん。そらそうよ的なあれなんだがなぜこのままなのかよくわからない。
+<a href="https://github.com/phpenv/phpenv/issues/38#issuecomment-31464333">issue</a>にあがっていたコメント通りにmasterからソースを戻す。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ cd .anyenv/envs/phpenv/php-ext/http
+</span><span class='line'>  $ git fetch
+</span><span class='line'>  $ git reset --hard origin/master
+</span><span class='line'>  $ cd ..
+</span><span class='line'>  $ git commit -am 'fix http'</span></code></pre></td></tr></table></div></figure>
+
+
+<p>一段落と思いきや、ここからもう少しだけ続く。ひと通り通してから気付いたが画像系とmemcache系がリンク出来なかったようだ</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ phpenv install php-5.5.12
+</span><span class='line'>  (snip)
+</span><span class='line'>  configure: error: Can't find vpxc.h
+</span><span class='line'>  (snip)</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>vpxc.hがない</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ brew install libvpx</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li><p>xpm系がない</p>
+
+<ul>
+<li><a href="http://xquartz.macosforge.org/landing/">XQuartz</a>を入れる</li>
+</ul>
+</li>
+<li><p>gd.hがない</p></li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ brew install gd</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>libmemcachedがない</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ brew install libmemcached</span></code></pre></td></tr></table></div></figure>
+
+
+<p>このxxxがない、系は環境依存かもしれないけど、まあなんとかこれで押し通せた。
+anyenvが採用しているphpenvはphp-buildを使わない書き方になっているらしいけど、その分の手間がどの程度かかるかで
+使い勝手を選ぶような気がしている。まあなんというかPHPを使わなければそれにこしたことはない。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">littlestarling</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-02T14:58:00+09:00" pubdate data-updated="true">May 2<span>nd</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/tips/'>tips</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://littlestarling.github.com/blog/2014/05/02/install-php-via-phpenv-on-anyenv/" data-via="littlestarling" data-counturl="http://littlestarling.github.com/blog/2014/05/02/install-php-via-phpenv-on-anyenv/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/11/20/how-to-install-wget-on-centos6/" title="Previous Post: CentOS6にWgetをインストールする">&laquo; CentOS6にWgetをインストールする</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/05/02/install-php-via-phpenv-on-anyenv/">anyenvで入れたphpenvでMacにPHPをインストールする</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/11/20/how-to-install-wget-on-centos6/">CentOS6にWgetをインストールする</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/26/review-gatchaman/">Review: ガッチャマン</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/24/review-4062633760/">Review: 殺戮にいたる病</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/03/review-the-mexican-suitcase/">Review:メキシカンスーツケース</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/littlestarling">@littlestarling</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'littlestarling',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/littlestarling"  data-widget-id=""  data-link-color="#1863a1" data-tweet-limit="4" data-chrome="noheader nofooter transparent noscrollbar">Tweets by @littlestarling</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </ul>
+  
+    <a href="http://twitter.com/littlestarling" class="twitter-follow-button" data-show-count="false">Follow @littlestarling</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - littlestarling -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

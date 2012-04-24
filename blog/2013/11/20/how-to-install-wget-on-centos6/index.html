@@ -5,13 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Blog Archive - DailyRecord::Base</title>
+  <title>CentOS6にWgetをインストールする - DailyRecord::Base</title>
   <meta name="author" content="littlestarling">
 
   
-  <meta name="description" content="Blog Archive 2014 anyenvで入れたphpenvでMacにPHPをインストールする
-May 02 2014 posted in tips 2013 CentOS6にWgetをインストールする
-Nov 20 2013 posted in linux, tips, Review &hellip;">
+  <meta name="description" content="しょうもない小ネタでもいいので、少しずつ積み上げていこうかと思いいたった。 qiita.comとかにストックすればいいじゃんっていう話もあるが、諸々の練習としても自前でやった方がよいので。 前提 対象OS: CentOS 6.4
+既存のwget (/usr/bin/wget)は残す &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +19,7 @@ Nov 20 2013 posted in linux, tips, Review &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://littlestarling.github.com/blog/archives/">
+  <link rel="canonical" href="http://littlestarling.github.com/blog/2013/11/20/how-to-install-wget-on-centos6/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -80,145 +79,130 @@ Nov 20 2013 posted in linux, tips, Review &hellip;">
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Blog Archive</h1>
+    
+      <h1 class="entry-title">CentOS6にWgetをインストールする</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-20T20:33:00+09:00" pubdate data-updated="true">Nov 20<span>th</span>, 2013</time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives">
 
 
+<div class="entry-content"><p>しょうもない小ネタでもいいので、少しずつ積み上げていこうかと思いいたった。</p>
 
-  
-  <h2>2014</h2>
+<p>qiita.comとかにストックすればいいじゃんっていう話もあるが、諸々の練習としても自前でやった方がよいので。</p>
 
-<article>
-  
-<h1><a href="/blog/2014/05/02/install-php-via-phpenv-on-anyenv/">anyenvで入れたphpenvでMacにPHPをインストールする</a></h1>
-<time datetime="2014-05-02T14:58:00+09:00" pubdate><span class='month'>May</span> <span class='day'>02</span> <span class='year'>2014</span></time>
+<h2>前提</h2>
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/tips/'>tips</a></span>
-</footer>
-
-
-</article>
+<ul>
+<li>対象OS: CentOS 6.4</li>
+<li>既存のwget (/usr/bin/wget)は残す</li>
+<li>アップデート理由: 低いバージョンだと取得できないURLがあったため</li>
+</ul>
 
 
+<h3>ソースコードのダウンロードと展開</h3>
 
-  
-  <h2>2013</h2>
-
-<article>
-  
-<h1><a href="/blog/2013/11/20/how-to-install-wget-on-centos6/">CentOS6にWgetをインストールする</a></h1>
-<time datetime="2013-11-20T20:33:00+09:00" pubdate><span class='month'>Nov</span> <span class='day'>20</span> <span class='year'>2013</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/categories/tips-/'>tips,</a></span>
-</footer>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ wget http://ftp.gnu.org/gnu/wget/wget-1.14.tar.gz
+</span><span class='line'>  $ tar zxvf wget-1.14.tar.gz</span></code></pre></td></tr></table></div></figure>
 
 
-</article>
+<h3>configure, make, make install</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ cd wget-1.14
+</span><span class='line'>  $ ./configure --with-ssl=openssl
+</span><span class='line'>  $ make
+</span><span class='line'>  $ sudo make install</span></code></pre></td></tr></table></div></figure>
 
 
+<h3>pathの確認</h3>
 
-<article>
-  
-<h1><a href="/blog/2013/09/26/review-gatchaman/">Review: ガッチャマン</a></h1>
-<time datetime="2013-09-26T07:44:00+09:00" pubdate><span class='month'>Sep</span> <span class='day'>26</span> <span class='year'>2013</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/movie/'>movie</a></span>
-</footer>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ which wget #=&gt; /usr/local/bin/wget</span></code></pre></td></tr></table></div></figure>
 
 
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2013/09/24/review-4062633760/">Review: 殺戮にいたる病</a></h1>
-<time datetime="2013-09-24T09:17:00+09:00" pubdate><span class='month'>Sep</span> <span class='day'>24</span> <span class='year'>2013</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/novel/'>novel</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2013/09/03/review-the-mexican-suitcase/">Review:メキシカンスーツケース</a></h1>
-<time datetime="2013-09-03T00:37:00+09:00" pubdate><span class='month'>Sep</span> <span class='day'>03</span> <span class='year'>2013</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/movie/'>movie</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2013/09/02/review-man-of-steel/">Review:Man of Steel</a></h1>
-<time datetime="2013-09-02T10:26:00+09:00" pubdate><span class='month'>Sep</span> <span class='day'>02</span> <span class='year'>2013</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/movie/'>movie</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2013/04/22/thought-about-continuous-input-and-output-in-2013/">今年もまた input と output を増やそうと思う雑感</a></h1>
-<time datetime="2013-04-22T22:47:00+09:00" pubdate><span class='month'>Apr</span> <span class='day'>22</span> <span class='year'>2013</span></time>
-
-
-</article>
-
-
-
-  
-  <h2>2012</h2>
-
-<article>
-  
-<h1><a href="/blog/2012/04/23/git-dojo-vol-dot-1/">git道場第1回に参加した</a></h1>
-<time datetime="2012-04-23T18:34:00+09:00" pubdate><span class='month'>Apr</span> <span class='day'>23</span> <span class='year'>2012</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/event/'>event</a>, <a class='category' href='/blog/categories/git/'>git</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2012/04/19/calculate-prime-days/">素数日を求める</a></h1>
-<time datetime="2012-04-19T10:42:00+09:00" pubdate><span class='month'>Apr</span> <span class='day'>19</span> <span class='year'>2012</span></time>
-
-
-</article>
-
+<p>通常は/usr/bin/wgetだが、入れなおしたことによって/usr/local/以下にインストールされる。
+これはconfigureのオプションのデフォルト指定(&#8211;prefix=/usr/local)</p>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">littlestarling</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-20T20:33:00+09:00" pubdate data-updated="true">Nov 20<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/linux/'>linux</a>, <a class='category' href='/blog/categories/tips-/'>tips,</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://littlestarling.github.com/blog/2013/11/20/how-to-install-wget-on-centos6/" data-via="littlestarling" data-counturl="http://littlestarling.github.com/blog/2013/11/20/how-to-install-wget-on-centos6/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/09/26/review-gatchaman/" title="Previous Post: Review: ガッチャマン">&laquo; Review: ガッチャマン</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/05/02/install-php-via-phpenv-on-anyenv/" title="Next Post: anyenvで入れたphpenvでMacにPHPをインストールする">anyenvで入れたphpenvでMacにPHPをインストールする &raquo;</a>
+      
+    </p>
+  </footer>
 </article>
 
 </div>

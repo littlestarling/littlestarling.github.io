@@ -4,7 +4,7 @@
   <title><![CDATA[DailyRecord::Base]]></title>
   <link href="http://littlestarling.github.com/atom.xml" rel="self"/>
   <link href="http://littlestarling.github.com/"/>
-  <updated>2012-04-23T18:52:38+09:00</updated>
+  <updated>2014-05-02T17:24:03+09:00</updated>
   <id>http://littlestarling.github.com/</id>
   <author>
     <name><![CDATA[littlestarling]]></name>
@@ -12,6 +12,602 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[anyenvで入れたphpenvでMacにPHPをインストールする]]></title>
+    <link href="http://littlestarling.github.com/blog/2014/05/02/install-php-via-phpenv-on-anyenv/"/>
+    <updated>2014-05-02T14:58:00+09:00</updated>
+    <id>http://littlestarling.github.com/blog/2014/05/02/install-php-via-phpenv-on-anyenv</id>
+    <content type="html"><![CDATA[<h2>前提</h2>
+
+<ul>
+<li>対象OS: Mac OSX 10.9.2 Mavericks</li>
+<li>既存のPHP(/usr/bin/php)を残す</li>
+</ul>
+
+
+<p>しょうもない系が続く。
+最近お仕事的にぺちぺちするところもあって、PHPのバージョン違いを考慮する必要なんかもあるので
+rbenv同様phpenvを入れておこうかと。ところが巷にあふれているphpenv(CHH/phpenv)はlibexecにまんまrbenv
+を突っ込んでいたりで、共存させるには*shrcで読ませる順番を気にしないといけないといった問題があった。
+現状まだバージョンを変える必要はないけどPythonもちょっとだけ読み書きしているのでpyenvも同じように&#8230;
+ということを考えるとanyenvで管理するべきかなと思い至った。
+rbenvは問題ないのだが、このphpenvが現状厄介なのでどうにかしてインストールまでこぎつける。</p>
+
+<h2>ざっくり作業メモ</h2>
+
+<h3>homebrewで入れていた*env系をremoveしていく</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ brew remove rbenv
+</span><span class='line'>  $ brew remove rbenv-gemset # gemset使う派です
+</span><span class='line'>  $ brew remove pyenv
+</span><span class='line'>  $ brew remove pyenb-virtualenv</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>anyenvインストール</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ cd
+</span><span class='line'>  $ git clone https://github.com/riywo/anyenv ~/.anyenv
+</span><span class='line'>  $ echo 'export PATH="$HOME/.anyenv/bin:$PATH"' &gt;&gt; ~/.zshrc
+</span><span class='line'>  $ echo 'eval "$(anyenv init -)"' &gt;&gt; ~/.zshrc
+</span><span class='line'>  $ exec $SHELL -l</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>*envインストール</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ anyenv install rbenv
+</span><span class='line'>  $ cd .anyenv/envs/rbenv/plugins
+</span><span class='line'>  $ git clone git://github.com/jf/rbenv-gemset.git # 使う派でｓ
+</span><span class='line'>  $ cd
+</span><span class='line'>  $ anyenv install phpenv</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Rubyインストール</h3>
+
+<p>そのまま引き継げるという話もあったけど、とりあえずこうやってまとめられるまでに試行錯誤が
+発生していたのでまっさらにし直した。readlineのバージョンを下げる必要もないので、パッチを
+充ててインストールする。<a href="http://qiita.com/riocampos@github/items/7ca8fa8e4448cd598ae0">Ruby 2.1.1 / 2.0.0をreadline 6.3の環境でもインストールするには - Qiita</a>
+を参照してコマンドをコピペ。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ curl -sSL https://gist.github.com/mislav/a18b9d7f0dc5b9efc162.txt | env CONFIGURE_OPTS="--with-readline-dir=`brew --prefix readline` --with-openssl-dir=`brew --prefix openssl`" rbenv install --patch 2.1.1</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>PHPインストール</h3>
+
+<p>一応今回のメイン。どういう悶着があったのかわからないが通信がさっぱり出来ていなくて、よく見たら
+phpenv/php-ext/httpの中身がすっからかん。そらそうよ的なあれなんだがなぜこのままなのかよくわからない。
+<a href="https://github.com/phpenv/phpenv/issues/38#issuecomment-31464333">issue</a>にあがっていたコメント通りにmasterからソースを戻す。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ cd .anyenv/envs/phpenv/php-ext/http
+</span><span class='line'>  $ git fetch
+</span><span class='line'>  $ git reset --hard origin/master
+</span><span class='line'>  $ cd ..
+</span><span class='line'>  $ git commit -am 'fix http'</span></code></pre></td></tr></table></div></figure>
+
+
+<p>一段落と思いきや、ここからもう少しだけ続く。ひと通り通してから気付いたが画像系とmemcache系がリンク出来なかったようだ</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ phpenv install php-5.5.12
+</span><span class='line'>  (snip)
+</span><span class='line'>  configure: error: Can't find vpxc.h
+</span><span class='line'>  (snip)</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>vpxc.hがない</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ brew install libvpx</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li><p>xpm系がない</p>
+
+<ul>
+<li><a href="http://xquartz.macosforge.org/landing/">XQuartz</a>を入れる</li>
+</ul>
+</li>
+<li><p>gd.hがない</p></li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ brew install gd</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>libmemcachedがない</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ brew install libmemcached</span></code></pre></td></tr></table></div></figure>
+
+
+<p>このxxxがない、系は環境依存かもしれないけど、まあなんとかこれで押し通せた。
+anyenvが採用しているphpenvはphp-buildを使わない書き方になっているらしいけど、その分の手間がどの程度かかるかで
+使い勝手を選ぶような気がしている。まあなんというかPHPを使わなければそれにこしたことはない。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[CentOS6にWgetをインストールする]]></title>
+    <link href="http://littlestarling.github.com/blog/2013/11/20/how-to-install-wget-on-centos6/"/>
+    <updated>2013-11-20T20:33:00+09:00</updated>
+    <id>http://littlestarling.github.com/blog/2013/11/20/how-to-install-wget-on-centos6</id>
+    <content type="html"><![CDATA[<p>しょうもない小ネタでもいいので、少しずつ積み上げていこうかと思いいたった。</p>
+
+<p>qiita.comとかにストックすればいいじゃんっていう話もあるが、諸々の練習としても自前でやった方がよいので。</p>
+
+<h2>前提</h2>
+
+<ul>
+<li>対象OS: CentOS 6.4</li>
+<li>既存のwget (/usr/bin/wget)は残す</li>
+<li>アップデート理由: 低いバージョンだと取得できないURLがあったため</li>
+</ul>
+
+
+<h3>ソースコードのダウンロードと展開</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ wget http://ftp.gnu.org/gnu/wget/wget-1.14.tar.gz
+</span><span class='line'>  $ tar zxvf wget-1.14.tar.gz</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>configure, make, make install</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  $ cd wget-1.14
+</span><span class='line'>  $ ./configure --with-ssl=openssl
+</span><span class='line'>  $ make
+</span><span class='line'>  $ sudo make install</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>pathの確認</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ which wget #=&gt; /usr/local/bin/wget</span></code></pre></td></tr></table></div></figure>
+
+
+<p>通常は/usr/bin/wgetだが、入れなおしたことによって/usr/local/以下にインストールされる。
+これはconfigureのオプションのデフォルト指定(&#8211;prefix=/usr/local)</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Review: ガッチャマン]]></title>
+    <link href="http://littlestarling.github.com/blog/2013/09/26/review-gatchaman/"/>
+    <updated>2013-09-26T07:44:00+09:00</updated>
+    <id>http://littlestarling.github.com/blog/2013/09/26/review-gatchaman</id>
+    <content type="html"><![CDATA[<h3>鑑賞情報</h3>
+
+<ul>
+<li>場所: 新宿バルト9シアター1</li>
+<li>日時: 2013-09-25 13:35</li>
+<li>制作費: とりあえずGスーツだけで2000万円</li>
+<li>キャッチコピー: <strong> その力は、正義か、破壊か―</strong></li>
+</ul>
+
+
+<h3>あらすじ</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>20XX年。謎の組織ギャラクターが突如全世界に対して宣戦布告。人類のテクノロジーを凌駕する圧倒的なパワーで、瞬く間に世界の半分を制圧する。なす術もない中、ISO（国際科学技術庁）の南部博士（岸谷五朗）は、“大鷲の健”（松坂桃李）、“コンドルのジョー”（綾野剛）、“白鳥のジュン”（剛力彩芽）、“燕の甚平”（濱田龍臣）、“みみずくの竜”（鈴木亮平）を招集。幼い頃から特殊訓練を積んできた彼ら科学忍者隊に最後の望みが託される。人類の存亡を賭け、ギャラクターと科学忍者隊との戦いが始まる……。
+</span><span class='line'>(Movie Walkerより引用)</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>雑感</h3>
+
+<p>とりあえず破壊力はすごかったよ、とキャッチコピーに対して言っておく…</p>
+
+<p>炎上物件としてド安定、ものの見事なまでの地雷映画としての呼び声が高そうな本作。</p>
+
+<p>わかっている罠にわざわざハマりに行くこともない、と思っていたのだが自殺志願者の友人に介錯を頼まれては赴くしかあるまい、といった流れで観ることになった。</p>
+
+<p>一説には制作費が80億とかいう記事も見たがさすがにそれはないと信じたい。8億ならあり得るかもしれない、というところだが。まともそうなソースで見る限りはスーツだけで2千万というのがあったので一応それだけは掲載しておく。</p>
+
+<p>いずれにしてもかなりこけているのは間違いなさそう。もう公開終盤だろうということと、休みをとっている都合平日日中に行っているということを加味しても客は10人いなかったと思う。
+そして最低1人は途中退席していたし、最低1人は営業の外回りの休憩にでも充てるつもりだったのか、最初から寝る姿勢に入っていた。あそこでわざわざ寝ようとするのも
+すごいものだが。</p>
+
+<p>さすがにこれはネタバレ的な要素を踏まえても構わないと思うし、きちんと細かく突っ込むにはその辺は必要なので断りなしでネタバレになるようなシーンについても言及することにする。
+個人的には大半の作品はネタバレしても楽しめると思うが、嫌な人は嫌な人でいるようなので念のため。</p>
+
+<h3>この映画で得られたこと</h3>
+
+<ul>
+<li>剛力彩芽をまともに動いている形で初めて見た</li>
+<li>友人とテーマトークをする機会に恵まれた</li>
+<li>世の中にはおぞましいほどに不真面目なプロダクトが存在すると思い知らされたこと</li>
+<li>どんなに個々人が頑張っても無駄になりうるということがあると知ったこと</li>
+</ul>
+
+
+<h3>この映画で失ったこと</h3>
+
+<ul>
+<li>貴重な時間</li>
+<li>平穏な心の持ち様</li>
+<li>2500円(パンフも買ったからな！)</li>
+</ul>
+
+
+<h3>脚本・構成</h3>
+
+<p>オリジナルのガッチャマンをほとんど知らないとはいえ、普通に見ていておかしいだろと言いたくなることが多すぎる。
+シリアスな話にしたいんだよね？暗い話の中でも希望を忘れず明るくやってますよ、というテイストにしたいのではないかと
+思われる&#8211;かなり好意的に捉えた結果だが&#8211;シーケンスが完全にテンポや雰囲気をぶち壊している。アヴェンジャーズあたりを
+意識しているのではないかという話もあるが、だったらなおのことおちゃらけシーケンスだけで無駄に時間をとるようなことは
+すべきじゃない。ありがちなネタはあくまで本筋にもきちんと絡むところでやるからそれっぽい息抜きになるのだ。</p>
+
+<p>本作はそういった意味でやり取りの全てがかなり微妙だ。</p>
+
+<ul>
+<li>くどくどと何のつもりで言わせているのかわからないような説明台詞。もう少し映像で見せようとか思わなかったのか
+
+<ul>
+<li>しかも一貫性がないので破綻しまくっている印象しか与えない</li>
+<li>ウィルス-Xが何千年も前からうんたらってあんた…元々あったんならそんなに組織だって動くのももっと早くあるべきだろ</li>
+<li>なんでナチスを思わせぶりに登場させてるんだかわからんがだったらはっきり言い切ってしまうべきだ。そんなところで突っ込み恐れてるくらいならもう少しやり方考えろ</li>
+</ul>
+</li>
+<li>人類に時間がないという時に個人的な感情を優先してぐだぐだやるシーン。常識で考えて「そんなことしてる場合じゃない」と観客が思ってしまって興ざめすぎる
+
+<ul>
+<li>前後（主に後）を聞けば納得できなくはないけど、「俺は1千万人のために1人を犠牲にするという考えを否定する」はあまりかっこよくないぞ</li>
+<li>むしろ否定したところで全員死ぬならだめだろ</li>
+<li>そして実際には犠牲になりそうもないレベルの争いだった日にはどうしてくれよう</li>
+</ul>
+</li>
+<li>身近な日常に驚きのVFX！みたいなつもりでやったのかもしれないが導入部から考えると現代東京が完全に健在な状態からスタートしているのはおかしいだろ
+
+<ul>
+<li>あの歯車さっさと止めようぜ、ギャラクターの雑魚いちいち相手している場合じゃないだろ</li>
+<li>思い切り人がいないか、普通に歩いてたりして全然緊迫感がない。謎の力で東京だけは無敵ですみたいな説明でもないと納得できん</li>
+<li>剛力さんがいきなりスイーツ的に買い物たんまりしてるのもイミフ。そんなに流通とか物資供給安定してんのなら壊滅状態じゃないだろ</li>
+<li>そもそも何のための「潜入作戦」だったのか？</li>
+<li>雑魚の割にギャラクターの皆さんえらい強いのでなぜもっと侵略していないのか違和感</li>
+<li>雑魚相手に随分苦戦しているのでほんとにこいつらで当てになるのかよくわからない</li>
+<li>作中で一言もガッチャマンという言葉が出てこない。本当に「人々は彼らをこう呼んだ」のか？
+
+<ul>
+<li>ガッチャマンそれに対する一般人の認識具合が不明。力があるのに迫害されていると見える状況なのか？</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>やたら命令は出すものの理不尽に説明もしない南部博士、あれでガッチャマン内部の不和が生じる意味がわからん。博士は何様なのか。</li>
+<li>都合よくグループ通話になったりならなかったりしているインカム。どうでもいいところでグループ通話になってるなら肝心なところもなっとけよ</li>
+<li>見た目に無理があるカークランド博士。どう頑張っても兼倉博士みたいな風貌だぞ。
+
+<ul>
+<li>自分を認証端末にするなんて何考えてるんだと言いたくなるカークランド博士。セキュリティ意識薄すぎないか</li>
+</ul>
+</li>
+<li>モスコーンの制御はジャミングしたらどうにか防げたんじゃないの？通信阻害に関して罠張ってるみたいな描写がないからなぜ発信源をどうにかしようとしているのかわからない
+
+<ul>
+<li>ていうかあんな博士一人でしか制御させられないような巨大兵器なんか潰してもしょうがないんだから最初から破壊すりゃいいじゃない。回り道しすぎ</li>
+</ul>
+</li>
+<li>世の中日本語と英語しかないとでも思ってんのか。ヨーロッパ奪還パーティって主催どこなんだよ。なぜISO配下の一員なのに真っ向から入れないんだ
+
+<ul>
+<li>アメリカとか中国とかロシアが不在過ぎ。ギャラクターにやられてるのかと思いきやモスコーンの標的にアメリカの2都市がなってるし、ロシア中国が全滅してたとしてもアメリカが空気なのはおかしい</li>
+<li>という意味で考えると日本人出張り過ぎ。不自然極まりない。</li>
+</ul>
+</li>
+<li>ていうか外人キャラが日本語をシームレスに受け取りすぎ
+
+<ul>
+<li>ギャラクター側も日本語堪能すぎ。お前出身プラハあたりだろ</li>
+<li>プラハの科学者が初代ベルクカッツェみたいな説明してる割になんで最初「東ヨーロッパ」なんだよ。ざっくりしすぎだろ</li>
+<li>同様に東アジアとかアフリカ奥地とかなめてんのか</li>
+</ul>
+</li>
+</ul>
+
+
+<p>軽く箇条書きにしてみようと思ったら大変なことになってきてまだ全然収まっていないのだが、とりあえず総評としては、
+あまりに脚本がおざなりというか、やり取りがいちいちコントみたいだと言えばいいのか。頭悪そうなやり取りしかなくて、
+正直辟易する。もう少し悲しみに包まれた雰囲気を出せないものか。これは確実に役者の問題ではなくて脚本と間の取り方としての
+演出の問題だ。本作についた肩書きは以下の3つなのだが…</p>
+
+<ul>
+<li>日本テレビ60周年記念作品</li>
+<li>日活100周年記念作品</li>
+<li>タツノコプロ50周年記念作品</li>
+</ul>
+
+
+<p>お願いです。3社のうちの1社でも事前チェックしてこれでOKだと思ったのですかと伺いたい。
+キャスティングをどうこう見る前にこれは本読み段階でだめだと思えるはずだ。<br/>
+オリジナルを知らない人にもここまで納得出来ない点がある上に、知っている人からしたらどのくらい不満が噴出するかわかったものではない。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Review: 殺戮にいたる病]]></title>
+    <link href="http://littlestarling.github.com/blog/2013/09/24/review-4062633760/"/>
+    <updated>2013-09-24T09:17:00+09:00</updated>
+    <id>http://littlestarling.github.com/blog/2013/09/24/review-4062633760</id>
+    <content type="html"><![CDATA[<p>みのもんた方面で流行っている2度目の夏休みを僕もとろうと思い(一部誇張)、今は少しばかり休んでいる。
+まあ休んでいると言ってもなんだかんだやることがあるのだけど、どうにもタイミングが悪くて小旅行の
+予定が流れてしまった。
+そんなわけでとりあえずふさぎ込むべく久しぶりに読書などしてみたのだった。</p>
+
+<p>本作は2ちゃんねるのミステリー板でよく挙げられている本を何冊かまとめ買いしたうちの一冊である。
+ちなみに購入したのは以下。</p>
+
+<ul>
+<li>殺戮にいたる病i(我孫子武丸)</li>
+<li>そして扉が閉ざされた(岡嶋二人)</li>
+<li>殺しの双曲線(西村京太郎)</li>
+<li>クリムゾンの迷宮(貴志祐介)</li>
+</ul>
+
+
+<p>殺しの双曲線以外現時点で読了。岡嶋二人はクラインの壷あたりで好きな文体だったのでかなり読んでいて
+気持ちよかった。一気に他の本も読めたのは順番のおかげもあったろう。
+逆に本作は登場人物が気持ち悪いというところに尽きた印象がある。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>永遠の愛をつかみたいと男は願った―。東京の繁華街で次々と猟奇的殺人を重ねるサイコ・キラーが出現した。犯人の名前は、蒲生稔!くり返される凌辱の果ての惨殺。冒頭から身も凍るラストシーンまで恐るべき殺人者の行動と魂の軌跡をたどり、とらえようのない時代の悪夢と闇を鮮烈無比に抉る衝撃のホラー。
+</span><span class='line'>(amazon.co.jpの内容紹介より)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>点数を付けるというほど明確な評価基準があるわけではないが、もう20年以上前の作品だし、傑作との呼び声は
+定着されているのだから多少ミソをつけようがかまわないだろう。全体的には面白かったと思うが、いくつか突っ込み
+たいところはあった。本作最大の叙述トリック部分についてカタルシスを感じるかどうかは多分そもそも叙述
+が好きかどうかで分かれるのだと思う。僕の感想は「&#8230;で？」だった。だからどうした感が強すぎたというか。
+後述するが、多分「気持ちはわかるが、そうはならない気がする」もあったと思う。</p>
+
+<h3>全体構成</h3>
+
+<p>エピローグから始まるという不思議な構成だったが、言ってみれば全て布石ではあるので読了後は納得するところがある。
+小説で刑事コロンボをやるとこんな感じなのかな、みたいなところだろうか。従って読者は犯人の名前は知っていることになる。
+三者の視点でパートが変わっていくが、エピローグ部分以外はあまり時系列が混線しないので流れとして把握しづらいということは
+ないと思う。</p>
+
+<h3>犯行描写</h3>
+
+<p>凌辱殺人における描写が散々グロできついというあおりを散見していたので多少身構えていたのだが、かなりあっさり風味に
+感じた。女性でないとその辺のリアリティが出てこないということなんだろうか。女子高生コンクリート詰め殺人事件
+のWikipediaの暴行描写の方が僕はきつくてまともに見ることができない。そういう意味では本作の殺人鬼はまだきれいなんだろう
+というべきか。</p>
+
+<h3>猟奇的？</h3>
+
+<p>猟奇殺人関連はどうしても海外の事例が多くなるが、その辺をあさるとネクロフィリアなどの感情はなんだか
+よくわからないという印象が強い。それを考えるとこの蒲生稔は頭で考えた内容が強いように受け取れてしまって、少し
+興ざめするところがある。「ああ、この人がんばって狂ってるようにしようとしてるんだ」というのが鼻につく。最初から
+「永遠の愛」とか紹介にあるのでまあそういうもんかとも言えなくはないが&#8230;どこか狂気が足りていないように思えた。
+大抵の場合、狂気は進行するものであり、増幅されていくものだ。と、なると頻度か残虐性、異常性などのベクトルで明確
+な進行が見えることが多いはずである。本作ではそこが弱いように思う。2回目から部位切除をいきなり行っていて、かつ
+証拠隠滅の意味を含めた行為まであるのに殺害場所や殺害後の被害者の扱いに関しての無頓着さが変わっていない。
+無頓着であるなら証拠隠滅に関しての意識もない方がよいのではないか。純粋に持ち帰りたかった、だけの方が納得いく
+ように思う。無秩序型という意味での無頓着さは自然（というのも妙な表現だが）なのだが、殺人へ至る流れと暴行手段の
+エスカレート具合を測れる狂気のステップアップが見られなかったのが残念だ。</p>
+
+<h3>登場人物</h3>
+
+<p>登場人物が総じて気持ち悪い。実際のところ、一番気持ち悪いのは雅子だと思う。母親というのは大なり小なり
+行き過ぎた過保護部分があるものかもしれないが、僕自身が自分の母というか女系家族が苦手なところもあるせいか、
+雅子パートの描写のあるある感は半端なかった。似たような臭いを感じるというか&#8230;想像可能にさせてしまう表現力はすごいと思う。
+樋口とかおるに関してはなんとなく仕方ないように思うところもあるが、稔の頑張って狂わせた感のあるキャラクターと、
+雅子のガチでありそうな気がする行き過ぎた過保護さは別種の気持ち悪さが際立った。
+そういえば結局フリージャーナリストの斉藤も相当な空気感が強かったがなんだったんだろう。</p>
+
+<h3>蒲生稔は誕生しうるのか？</h3>
+
+<p>ネタバレになるが、一番引っかかったところでもある。唐突に何らかの影響でこういった行為に走るということはあるようなのだが、
+それにしてもそのあたりが曖昧だ。曖昧で許されるのは20代までだよねーみたいな感じで、稔のあたりまでいってしまうとこのような
+直接的行為に出るほど狂うにはなかなか難しいはずだ。もっと何かしらはっきりした外的要因がないと発動できないと思う。
+また、最終的に血族に回帰していたが、この辺もどこか不自然だ。母性を求めるなら最初から求めるし、そしてその母性は最後まで
+殺しきれないからこそ他の女を代替品として嬲り殺していく羽目になる。手を出せてしまうならむしろ雅子に対しての家庭内暴力という
+形で発現し始めるものじゃなかろうか。</p>
+
+<h3>雑感</h3>
+
+<p>そんなわけで、ついつい突っ込みを入れてしまったが、文体も読みやすく、すいすい進むところはあった。
+サスペンスやミステリージャンルが好きな人には当たり前に読んでいてもおかしくないし、未読であれば損はしないと思う。
+20年前の作品ということで、携帯電話的な存在がないことや、明らかに宮﨑勤事件を意識におかせるための表現が今読む人にも
+斬新に伝わるかはわからないけれど、背景に描写されている社会的病理のようなものは現在にも通底していると思う。
+個人的には読者の印象をひっくり返すだけの叙述&#8211;叙述トリックとはそういうものだと言われたとしても&#8211;は嫌いなので、
+本作のトリックそのもので最初びっくりはするが、だからどうしたのか、という風に終わってしまうことが多い。
+アクロイド殺しは謎解きをちゃんとするから僕の中ではありなのだが、本作のような謎解きというよりは事実はこうでした、
+という描写だとなんとも置いてきぼりというか、微妙感が強い。現代舞台であまり見栄を切って外連味出しまくる探偵ものもどうかと
+思うが、いろんな先達の上に新たな表現を求めるというのは非常に難しいことなんだろうなと思わせてくれる。
+とにかく、読後に何かしら吐き出せるものはあるだろう。
+表題の「殺戮に至る病」は当然キルケゴールの「死に至る病」からの着想だと思われる。死に至る病が絶望であるなら、
+殺戮に至る病は愛である。純粋な愛を望むがゆえ、それを与えきれない相手に対して絶望をしてしまう。
+愛を欲する相手に対する絶望はすなわち自身が相手に与える死であり、それすなわち殺戮である、というロジックだと
+理解している。しかしその愛はいつから欲せられたものなのだろう。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Review:メキシカンスーツケース]]></title>
+    <link href="http://littlestarling.github.com/blog/2013/09/03/review-the-mexican-suitcase/"/>
+    <updated>2013-09-03T00:37:00+09:00</updated>
+    <id>http://littlestarling.github.com/blog/2013/09/03/review-the-mexican-suitcase</id>
+    <content type="html"><![CDATA[<h3>鑑賞情報</h3>
+
+<ul>
+<li>場所: 新宿 シネマカリテ Screen2</li>
+<li>日時: 2013-09-01 20:50</li>
+<li>方式: 字幕</li>
+</ul>
+
+
+<h3>あらすじ</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>1936年、総選挙で誕生した共和制民主主義派とその打倒を唱えるフランコ軍とが衝突したスペイン内戦。報道写真家のロバート・キャパがこのスペイン内戦を写した写真のネガが、第二次世界大戦の混乱の中パリのスタジオから消えた。しかしどこかに現存するとささやかれ続け、彼の弟で国際写真センターを創設したコーネル・キャパもネガの行方を追っていた。そして2007年、メキシコで4500枚にもおよぶネガが収まった3つの箱が発見される。“メキシカン・スーツケース”と呼ばれることになるその箱に入っていたネガには、彼のだけでなく、同じくスペイン内戦を取材していたゲルダ・タローやデヴィッド・シーモア“シム”が写したものも含まれていた。彼らが共和国軍側の戦場で撮った写真は、スペイン内戦の最も貴重な視覚的記録とされた。この3人の写真家の関係者の話から、彼らの人物像について掘り下げていく。そして70年以上経ち遠い過去のこととなりつつあるスペイン内戦が、現在でも傷痕を残し、今のスペインが抱える問題につながっていることを本作は浮き彫りにする。
+</span><span class='line'>(Movie Walkerより引用)</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>雑感</h3>
+
+<p>スペインはいまだ&#8221;戦後&#8221;のただ中にある。</p>
+
+<p>公式サイトの比嘉セツ氏の特別寄稿にあるように、フランコ政権時代の粛清された人々の尊厳の回復を図ったバルタサル・ガルソン判事は2009年から2010年にかけて告訴され、職務停止、
+2012年には実質のスペイン司法からの追放処分を受けるなど、いまだに終わっていない感覚が強く残っているのだろう。
+その点日本は終わったというか、微妙な断絶があって実感を伴っていないというのが個人的な印象ではある。
+下山事件や松川事件などのGHQ統制下でのミステリーに関するあれこれが公開された時がある意味本当の戦後なのではないか。
+そういった意味では日本もスペインと同じなのかもしれない。</p>
+
+<p>1936年、クーデターに端を発し、ドイツ、イタリアの援助を受けてファシズムとの戦いとなったスペイン内戦。
+独裁者となったフランシスコ・フランコが1975年に没した後も、内戦に対しての総括を行うことができないでいる。
+ヘミングウェイは実際に人民戦線軍に参加し、誰がために鐘は鳴るを執筆するなど、欧米の著名人が多数その身を投じた
+中に、夢と野望を持った&#8221;成り上がり&#8221;の著名な写真家、ロバート・キャパがいた。</p>
+
+<p>ロバート・キャパという写真家の誕生自体がこの戦争によるものであり、若者が成り上がるためのプロジェクトであった
+という事実はこの映画を観るまで知らなかった。そして、ゲルダ・タローの死によってキャパ自身が戦争に呪われてしまった
+&#8211;少なくともそう感じられた&#8211;ことも。</p>
+
+<p>記録することにどれほどの意義を見出していたのかはわからない。だが、フランスからメキシコへの亡命者の手から手に
+渡って生き延びた&#8221;スーツケース&#8221;のネガは、スペインの今を生きる人々を象徴する当時の鏡となった。</p>
+
+<p>キャパについてのあれこれを知りたい人には描写は薄いと感じられるだろう。このドキュメンタリーは上記あらすじにもあるように、
+今のスペインを描くことに力点が置かれている。そして、その描写は翻って我が身にも問いかける。「戦後」とはなにか？</p>
+
+<p>今の日本は震災と原発事故によって新たな戦中にあるのかもしれない。そういう意味で何か示唆的なものを感じさせてくれる。
+自分にはまだ咀嚼がしきれていないなと感じている。
+いずれまた時間のある時に観てみたい。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Review:Man of Steel]]></title>
+    <link href="http://littlestarling.github.com/blog/2013/09/02/review-man-of-steel/"/>
+    <updated>2013-09-02T10:26:00+09:00</updated>
+    <id>http://littlestarling.github.com/blog/2013/09/02/review-man-of-steel</id>
+    <content type="html"><![CDATA[<p>outputしようとか言っといてこれまた早数ヶ月なので、とにかく文章を書くことの練習がてら書いておくようにする。</p>
+
+<h3>鑑賞情報</h3>
+
+<ul>
+<li>場所: 新宿ピカデリーシアター1</li>
+<li>日時: 2013-09-01 15:10</li>
+<li>方式: 3D字幕</li>
+<li>制作費: 2億2千500万ドル</li>
+</ul>
+
+
+<h3>あらすじ</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>マーサ（ダイアン・レイン）とジョナサン（ケビン・コスナー）の夫婦に育てられたクラーク・ケント（ヘンリー・カビル）。クラークは実はクリプトン星に生まれ、星の滅亡を予測したジョー＝エル（ラッセル・クロウ）が地球に送った彼の息子だった。幼い頃よりクラークは周囲の人々とは違う特殊能力を持っていることに苦悩していたが、やがて地球を守るという自らの使命に気付く……。
+</span><span class='line'>(Movie Walkerより引用)</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>雑感</h3>
+
+<p>公開直後に1st dayにぶち当たることもあり、ほぼ満員。携帯の電源切ってなかったり、なんか臭い人とかもいたりしてそういう面はどうしても閉口してしまうところはある。
+まあ映画館で観るというのは良くも悪くもそういうことだろう。新宿という土地柄もあってか、結構外国人観客も見えた。</p>
+
+<p>とりあえずブロックバスタームービーとして、またクリストファー・ノーランが関わる世界観をベースにしたジャスティスリーグへのつながりとして、ダークで
+リアリティを感じさせようとするスーパーマンのリブートとしてはある程度成功していると思う。
+元々のスーパーマンがどうであれ、バットマンをダークナイトトリロジーとしてリブートしたように、一定以上のリアリティラインを引こうとしているのは
+理解出来る。ノーランはアクションの描写が下手だけど、その辺をザック・スナイダーが受け持ったことでモッサリ感はなかった。ただし、もっさりさせないために
+400mダッシュして10m休憩するインターバルトレーニングを2時間半続けるかのような呼吸が浅くなる構成とも感じられた。</p>
+
+<p>ストーリーとしては、カル・エルことクラーク・ケントがいかにして地球に送られ、そしてスーパーマンとして立ち上がるまでを描いている。
+一つの完結は迎えているものの、続編が確実にあることを意識させる終わり方だったように思う。</p>
+
+<p>それもあってか、スーパーマンの誕生までを描く話で2時間半をかけるというのはちょっと長すぎるように感じた。具体的にはディザスター描写が多すぎることと、
+「ウオオオオオオ！！！！」と叫びながら突撃する以外に戦闘術を持たないスーパーマンの戦闘描写が、相手が誰であっても代わり映えしづらいために単なる
+繰り返しに見えてしまうことに理由があると思う。鑑賞中はそうはいっても前述のようにひとつひとつのシーケンスはそれなりのスピード感を出していたことと、
+畳み掛けるようにすぐに次のシーケンスに突入していくためあまりダレた感じを持たせないようにしている。見終わった後、もしくは最後半部分あたりでまだ続くんかい、
+と少しずつその繰り返し自体に飽きを感じさせてしまうように思った。</p>
+
+<p>戦闘術が洗練されていないのは当然なので、今後はどうあれ今のスーパーマンが正面突撃しか基本出来ないのは納得する。ただそれが延々続くことと、CGのオブジェクトが
+飛び交う中での高速移動というのがキャラクターの場所を探すのになかなか疲れる。いわゆるドラゴンボールバトルの高速感の演出はマトリックスの頃から続く
+難しい課題なのではないか。アクションシーンの描写はボーンシリーズでひとつのエポックメイキングが起こったが、単なる激突だけでなく、そういったCQCめいた
+描写を織り交ぜないとただのCG祭りになってしまう。小気味よく進めるためにはある程度カット出来るところがあったのではないかと感じた。</p>
+
+<p>俳優陣はさすがと言える人が揃っていた。ケビン・コスナーはやっぱり農場のおっさんでアメリカを語らせたらさすがの説得力があるし、ラッセル・クロウも
+科学者と言われてもちょっとわからないが、優しく導く父という感じはした。ローレンス・フィッシュバーンも久しぶりに見たらえらい恰幅がよくなってたけど
+相変わらず。マイケル・シャノンが戦闘役としての苦悩も吐露しながら戦う様は単なる勧善懲悪でないことを示している。</p>
+
+<p>音楽のハンス・ジマーはスーパーマンのテーマは使わないという方向で制作をしているそうで、その辺は良くも悪くも旧作を知らなくても入れる点かもしれない。
+特にこのテイストでのリブートなのだから繋げたくないという意図はあるだろう。アンビエントな効果を狙ったシンセエフェクトが多かったように思うのだが、
+前述のように携帯の電源を切っていない不届き者がいたりする状況では「また誰かの携帯鳴ってる&#8230;」みたいに勘違いするところもあった。</p>
+
+<p>いずれにせよ、微に入り細を穿つように旧作との違いやつながりを探す向きには不適当だが、新たなスーパーマンサーガの誕生として突っ走って観る分には満足感は得られるだろう。</p>
+
+<p>蛇足ながら、少なくともトレイラーの時点でかなりの地雷感が漂い、現状実際にそうなりつつあるガッチャマンあたりとは雲泥の差である。ちょうど鑑賞前にタマフルのpodcast
+を聞いていたので目に止まったのだけど、ひとつひとつのアクションに対して、エキストラ達がちゃんと反応している描写を挟んでいるからこそ、目の前のCG祭りに
+対しての説得力が出ている。邦画のCG描写で何かいまひとつマッチしていないという印象を持たせてしまうものがあるとしたら、その辺りの描写の融合に対しての
+本気度合いもあるかもしれない。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[今年もまた input と output を増やそうと思う雑感]]></title>
+    <link href="http://littlestarling.github.com/blog/2013/04/22/thought-about-continuous-input-and-output-in-2013/"/>
+    <updated>2013-04-22T22:47:00+09:00</updated>
+    <id>http://littlestarling.github.com/blog/2013/04/22/thought-about-continuous-input-and-output-in-2013</id>
+    <content type="html"><![CDATA[<p>気付けばjekyll+octopressを触ろうとして早1年。最低でも年1回はなんかしようと思って多少は触るということは
+しているわけだがいかんせん何も成せていない感が高まって仕方ない。</p>
+
+<p>元々は技術系はこっち、映画や音楽など他の趣味については別で、とか諸々考えてはいたのだが、いずれにしても
+どちらにもネット上ではOutputはないままだった。映画については比較的本職に近い方々と頻繁にお会いすること
+が増えたので直接話してしまって完結してしまいがちだが、これもなるだけまとめておけるようにしよう。</p>
+
+<p>実際に移れるかどうかはともかく、身の振り方を考える時期がまた来てしまったところで自分のポートフォリオが
+ないことにまた困った感じがしてしまうのだった。何もないよりは少しでも出しておいた方がいい。</p>
+
+<p>そこそこ近しい人にはネットでもリアルでも引きこもりです、と言っていたが、勉強会やコミュニティの類から
+足を遠のかせていたのは業務多忙的な面もあったが意識的に引いていたところもある。
+交流そのものが目的になってしまう状態であっては、技術的コミュニティとしての関わりと考えるとちょっと
+足りていないものがあると考えているからだ。何を出すことで誰に対してアピールができるのか、ということを
+考え始めると結局のところ身動きが取れなくなることが多いし、実際そういう部分が多い。しかし、「単にいる
+だけでいいんだよ」というのは少なくとも&#8221;自分と技術系コミュニティ&#8221;という関係においては自分が求めるもの
+ではないと思っている。とりあえず自分なりにこれは形になったな、と思えるものを作り、それを伝えるなり
+したい。思っていてもなかなかできることではないのだけど、それこそ「はじめの一歩を踏み出そう」なわけだ。
+適切なインプットを咀嚼して、自分として何かを作る源泉にし、それをアウトプットしたい。
+軽いものからでいいので、まずは始めて、生活の中に組み込むようにしていこう。
+宣言した時点で自然と出来ている人には負けているとかあるかもしれないが、何もしないよりは上を向いていたい
+ものだ。そこはそういうものとしよう。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[git道場第1回に参加した]]></title>
@@ -62,8 +658,8 @@ MercurialとGitについてという話でひとしきり話題になったこ�
 
 <div><script src='https://gist.github.com/2372772.js?file='></script>
 <noscript><pre><code>#-*- coding:utf-8 -*-
-require 'date'
-require 'mathn'
+require &#39;date&#39;
+require &#39;mathn&#39;
 
 def prime_days(sday, eday)
   sday = Date.today unless sday

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: linux | DailyRecord::Base]]></title>
+  <link href="http://littlestarling.github.com/blog/categories/linux/atom.xml" rel="self"/>
+  <link href="http://littlestarling.github.com/"/>
+  <updated>2014-05-02T17:24:03+09:00</updated>
+  <id>http://littlestarling.github.com/</id>
+  <author>
+    <name><![CDATA[littlestarling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[CentOS6にWgetをインストールする]]></title>
+    <link href="http://littlestarling.github.com/blog/2013/11/20/how-to-install-wget-on-centos6/"/>
+    <updated>2013-11-20T20:33:00+09:00</updated>
+    <id>http://littlestarling.github.com/blog/2013/11/20/how-to-install-wget-on-centos6</id>
+    <content type="html"><![CDATA[<p>しょうもない小ネタでもいいので、少しずつ積み上げていこうかと思いいたった。</p>
+
+<p>qiita.comとかにストックすればいいじゃんっていう話もあるが、諸々の練習としても自前でやった方がよいので。</p>
+
+<h2>前提</h2>
+
+<ul>
+<li>対象OS: CentOS 6.4</li>
+<li>既存のwget (/usr/bin/wget)は残す</li>
+<li>アップデート理由: 低いバージョンだと取得できないURLがあったため</li>
+</ul>
+
+
+<h3>ソースコードのダウンロードと展開</h3>
+
+<pre><code>  $ wget http://ftp.gnu.org/gnu/wget/wget-1.14.tar.gz
+  $ tar zxvf wget-1.14.tar.gz
+</code></pre>
+
+<h3>configure, make, make install</h3>
+
+<pre><code>  $ cd wget-1.14
+  $ ./configure --with-ssl=openssl
+  $ make
+  $ sudo make install
+</code></pre>
+
+<h3>pathの確認</h3>
+
+<pre><code>    $ which wget #=&gt; /usr/local/bin/wget
+</code></pre>
+
+<p>通常は/usr/bin/wgetだが、入れなおしたことによって/usr/local/以下にインストールされる。
+これはconfigureのオプションのデフォルト指定(--prefix=/usr/local)</p>
+]]></content>
+  </entry>
+  
+</feed>

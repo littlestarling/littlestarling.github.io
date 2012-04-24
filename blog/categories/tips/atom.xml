@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: tips | DailyRecord::Base]]></title>
+  <link href="http://littlestarling.github.com/blog/categories/tips/atom.xml" rel="self"/>
+  <link href="http://littlestarling.github.com/"/>
+  <updated>2014-05-02T17:24:03+09:00</updated>
+  <id>http://littlestarling.github.com/</id>
+  <author>
+    <name><![CDATA[littlestarling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[anyenvで入れたphpenvでMacにPHPをインストールする]]></title>
+    <link href="http://littlestarling.github.com/blog/2014/05/02/install-php-via-phpenv-on-anyenv/"/>
+    <updated>2014-05-02T14:58:00+09:00</updated>
+    <id>http://littlestarling.github.com/blog/2014/05/02/install-php-via-phpenv-on-anyenv</id>
+    <content type="html"><![CDATA[<h2>前提</h2>
+
+<ul>
+<li>対象OS: Mac OSX 10.9.2 Mavericks</li>
+<li>既存のPHP(/usr/bin/php)を残す</li>
+</ul>
+
+
+<p>しょうもない系が続く。
+最近お仕事的にぺちぺちするところもあって、PHPのバージョン違いを考慮する必要なんかもあるので
+rbenv同様phpenvを入れておこうかと。ところが巷にあふれているphpenv(CHH/phpenv)はlibexecにまんまrbenv
+を突っ込んでいたりで、共存させるには*shrcで読ませる順番を気にしないといけないといった問題があった。
+現状まだバージョンを変える必要はないけどPythonもちょっとだけ読み書きしているのでpyenvも同じように...
+ということを考えるとanyenvで管理するべきかなと思い至った。
+rbenvは問題ないのだが、このphpenvが現状厄介なのでどうにかしてインストールまでこぎつける。</p>
+
+<h2>ざっくり作業メモ</h2>
+
+<h3>homebrewで入れていた*env系をremoveしていく</h3>
+
+<pre><code>  $ brew remove rbenv
+  $ brew remove rbenv-gemset # gemset使う派です
+  $ brew remove pyenv
+  $ brew remove pyenb-virtualenv
+</code></pre>
+
+<h3>anyenvインストール</h3>
+
+<pre><code>  $ cd
+  $ git clone https://github.com/riywo/anyenv ~/.anyenv
+  $ echo 'export PATH="$HOME/.anyenv/bin:$PATH"' &gt;&gt; ~/.zshrc
+  $ echo 'eval "$(anyenv init -)"' &gt;&gt; ~/.zshrc
+  $ exec $SHELL -l
+</code></pre>
+
+<h3>*envインストール</h3>
+
+<pre><code>  $ anyenv install rbenv
+  $ cd .anyenv/envs/rbenv/plugins
+  $ git clone git://github.com/jf/rbenv-gemset.git # 使う派でｓ
+  $ cd
+  $ anyenv install phpenv
+</code></pre>
+
+<h3>Rubyインストール</h3>
+
+<p>そのまま引き継げるという話もあったけど、とりあえずこうやってまとめられるまでに試行錯誤が
+発生していたのでまっさらにし直した。readlineのバージョンを下げる必要もないので、パッチを
+充ててインストールする。<a href="http://qiita.com/riocampos@github/items/7ca8fa8e4448cd598ae0">Ruby 2.1.1 / 2.0.0をreadline 6.3の環境でもインストールするには - Qiita</a>
+を参照してコマンドをコピペ。</p>
+
+<pre><code>  $ curl -sSL https://gist.github.com/mislav/a18b9d7f0dc5b9efc162.txt | env CONFIGURE_OPTS="--with-readline-dir=`brew --prefix readline` --with-openssl-dir=`brew --prefix openssl`" rbenv install --patch 2.1.1
+</code></pre>
+
+<h3>PHPインストール</h3>
+
+<p>一応今回のメイン。どういう悶着があったのかわからないが通信がさっぱり出来ていなくて、よく見たら
+phpenv/php-ext/httpの中身がすっからかん。そらそうよ的なあれなんだがなぜこのままなのかよくわからない。
+<a href="https://github.com/phpenv/phpenv/issues/38#issuecomment-31464333">issue</a>にあがっていたコメント通りにmasterからソースを戻す。</p>
+
+<pre><code>  $ cd .anyenv/envs/phpenv/php-ext/http
+  $ git fetch
+  $ git reset --hard origin/master
+  $ cd ..
+  $ git commit -am 'fix http'
+</code></pre>
+
+<p>一段落と思いきや、ここからもう少しだけ続く。ひと通り通してから気付いたが画像系とmemcache系がリンク出来なかったようだ</p>
+
+<pre><code>  $ phpenv install php-5.5.12
+  (snip)
+  configure: error: Can't find vpxc.h
+  (snip)
+</code></pre>
+
+<ul>
+<li><p>vpxc.hがない
+<code>
+$ brew install libvpx
+</code></p></li>
+<li><p>xpm系がない</p>
+
+<ul>
+<li><a href="http://xquartz.macosforge.org/landing/">XQuartz</a>を入れる</li>
+</ul>
+</li>
+<li><p>gd.hがない
+<code>
+$ brew install gd
+</code></p></li>
+<li><p>libmemcachedがない
+<code>
+$ brew install libmemcached
+</code></p></li>
+</ul>
+
+
+<p>このxxxがない、系は環境依存かもしれないけど、まあなんとかこれで押し通せた。
+anyenvが採用しているphpenvはphp-buildを使わない書き方になっているらしいけど、その分の手間がどの程度かかるかで
+使い勝手を選ぶような気がしている。まあなんというかPHPを使わなければそれにこしたことはない。</p>
+]]></content>
+  </entry>
+  
+</feed>
